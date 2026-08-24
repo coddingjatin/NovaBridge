@@ -18,9 +18,24 @@ exports.createOrder = async (req, res, next) => {
       query = { customId: courseId };
     }
 
-    const course = await Course.findOne(query);
+    const COURSE_DEFAULTS = {
+      sc1: { customId: 'sc1', title: 'Mastering QuickBooks Online & Financial Bookkeeping', price: 429, instructor: 'Mark Smolen' },
+      sc2: { customId: 'sc2', title: 'SAP FICO (Financial Accounting & Management Accounting)', price: 509, instructor: 'Rana W Mehmood' },
+      sc3: { customId: 'sc3', title: 'QuickBooks Online Complex Issues And Advanced Techniques', price: 399, instructor: 'Mark Smolen' },
+      sc4: { customId: 'sc4', title: 'Excel Crash Course: Master Excel for Financial Analysis', price: 469, instructor: 'Scott Powell' },
+      sc5: { customId: 'sc5', title: 'Distributed System Design & High-Throughput Microservices', price: 599, instructor: 'Prof. Robert Morris (MIT)' },
+      sc6: { customId: 'sc6', title: 'Competitive Programming Masterclass (Codeforces Candidate Master)', price: 499, instructor: 'Jatin Vishwakarma (IITB)' },
+    };
+
+    let course = await Course.findOne(query);
     if (!course) {
-      return res.status(404).json({ success: false, message: 'Course not found' });
+      // Auto-create course if not in DB (handles fresh deployments without manual seed)
+      const defaults = COURSE_DEFAULTS[courseId];
+      if (!defaults) {
+        return res.status(404).json({ success: false, message: `Course not found: ${courseId}` });
+      }
+      course = await Course.create(defaults);
+      console.log('Auto-created course in DB:', course.title);
     }
 
     // Check if user is already enrolled in this course to prevent duplicate purchase
