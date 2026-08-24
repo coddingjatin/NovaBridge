@@ -7,5 +7,6 @@ router.post('/create-order', authMiddleware, paymentController.createOrder);
 router.post('/verify', authMiddleware, paymentController.verifyPayment);
 router.post('/refund', authMiddleware, paymentController.refundPayment);
 router.get('/history', authMiddleware, paymentController.getPaymentHistory);
+router.post('/webhook', paymentController.handlePayFlowWebhook);
 
 module.exports = router;
