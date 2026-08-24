@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BookOpen, Star, ShoppingCart, CheckCircle2, X, Filter, Zap, ShieldCheck, Sparkles, CreditCard } from 'lucide-react';
+import { useRazorpay } from '../hooks/useRazorpay';
 
 export interface StoreCourse {
   id: string;
@@ -103,7 +104,7 @@ export const initialStoreCourses: StoreCourse[] = [
   }
 ];
 
-export const CourseStorePage: React.FC = () => {
+export const CourseStorePage: React.FC<{ user?: any }> = ({ user }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedCourse, setSelectedCourse] = useState<StoreCourse | null>(null);
   const [purchasedCourses, setPurchasedCourses] = useState<string[]>([]);
@@ -121,17 +122,43 @@ export const CourseStorePage: React.FC = () => {
     setCheckoutSuccess(false);
   };
 
+  const { initiatePayment, loading: isPaymentProcessing } = useRazorpay();
+
   const handleConfirmPayment = () => {
-    if (selectedCourse) {
-      setPurchasedCourses([...purchasedCourses, selectedCourse.id]);
-      setCheckoutSuccess(true);
-      setTimeout(() => {
-        setCheckoutSuccess(false);
-        setSelectedCourse(null);
-        setToastMsg(`Successfully enrolled in "${selectedCourse.title}"! Course unlocked.`);
-        setTimeout(() => setToastMsg(null), 4000);
-      }, 1200);
-    }
+    if (!selectedCourse) return;
+
+    initiatePayment({
+      courseId: selectedCourse.id,
+      courseTitle: selectedCourse.title,
+      userDetails: {
+        name: user?.name,
+        email: user?.email,
+      },
+      onSuccess: () => {
+        setPurchasedCourses([...purchasedCourses, selectedCourse.id]);
+        setCheckoutSuccess(true);
+        setTimeout(() => {
+          setCheckoutSuccess(false);
+          setSelectedCourse(null);
+          setToastMsg(`Successfully enrolled in "${selectedCourse.title}"! Course unlocked.`);
+          setTimeout(() => setToastMsg(null), 4000);
+        }, 1200);
+      },
+      onError: (errorMessage) => {
+        alert(`Payment error: ${errorMessage}`);
+      },
+      onMockFallback: () => {
+        // Fallback for offline local dev mode
+        setPurchasedCourses([...purchasedCourses, selectedCourse.id]);
+        setCheckoutSuccess(true);
+        setTimeout(() => {
+          setCheckoutSuccess(false);
+          setSelectedCourse(null);
+          setToastMsg(`Successfully enrolled in "${selectedCourse.title}"! (Offline Mock Mode)`);
+          setTimeout(() => setToastMsg(null), 4000);
+        }, 1200);
+      }
+    });
   };
 
   return (
@@ -280,10 +307,12 @@ export const CourseStorePage: React.FC = () => {
             </div>
 
             <div className="checkout-actions-row">
-              <button onClick={() => setSelectedCourse(null)} className="btn-cancel-checkout">Cancel</button>
-              <button onClick={handleConfirmPayment} disabled={checkoutSuccess} className="btn-confirm-pay">
+              <button onClick={() => setSelectedCourse(null)} className="btn-cancel-checkout" disabled={isPaymentProcessing}>Cancel</button>
+              <button onClick={handleConfirmPayment} disabled={checkoutSuccess || isPaymentProcessing} className="btn-confirm-pay">
                 {checkoutSuccess ? (
                   <><CheckCircle2 size={16} /> Payment Successful!</>
+                ) : isPaymentProcessing ? (
+                  <><Zap size={16} /> Processing...</>
                 ) : (
                   <><Zap size={16} /> Pay ₹{selectedCourse.priceINR}.00 & Enroll</>
                 )}

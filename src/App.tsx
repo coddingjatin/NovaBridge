@@ -382,7 +382,7 @@ export function App() {
 
             {currentRoute === '/student/courses' && (
               <div>
-                <CourseStorePage />
+                <CourseStorePage user={user} />
               </div>
             )}
 
