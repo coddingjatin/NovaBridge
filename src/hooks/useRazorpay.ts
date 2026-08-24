@@ -25,6 +25,7 @@ const loadRazorpayScript = (): Promise<boolean> => {
 interface InitiatePaymentParams {
   courseId: string;
   courseTitle: string;
+  coursePrice: number;
   userDetails?: {
     name?: string;
     email?: string;
@@ -39,13 +40,13 @@ export const useRazorpay = () => {
   const [loading, setLoading] = useState(false);
 
   const initiatePayment = useCallback(
-    async ({ courseId, courseTitle, userDetails, onSuccess, onError, onMockFallback }: InitiatePaymentParams) => {
+    async ({ courseId, courseTitle, coursePrice, userDetails, onSuccess, onError, onMockFallback }: InitiatePaymentParams) => {
       setLoading(true);
       try {
         let orderRes;
         try {
           // 1. Create order on the server
-          orderRes = await paymentService.createOrder(courseId);
+          orderRes = await paymentService.createOrder(courseId, coursePrice, courseTitle);
         } catch (serverErr: any) {
           console.warn('Backend server unreachable or error. Falling back to local mock payment...', serverErr);
           if (onMockFallback) {

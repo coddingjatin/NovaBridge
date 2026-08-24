@@ -130,6 +130,7 @@ export const CourseStorePage: React.FC<{ user?: any }> = ({ user }) => {
     initiatePayment({
       courseId: selectedCourse.id,
       courseTitle: selectedCourse.title,
+      coursePrice: selectedCourse.priceINR,
       userDetails: {
         name: user?.name,
         email: user?.email,

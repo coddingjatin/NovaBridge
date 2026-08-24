@@ -5,5 +5,7 @@ const authMiddleware = require('../middleware/auth');
 
 router.post('/create-order', authMiddleware, paymentController.createOrder);
 router.post('/verify', authMiddleware, paymentController.verifyPayment);
+router.post('/refund', authMiddleware, paymentController.refundPayment);
+router.get('/history', authMiddleware, paymentController.getPaymentHistory);
 
 module.exports = router;

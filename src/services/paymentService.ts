@@ -21,11 +21,16 @@ const getHeaders = () => {
 };
 
 export const paymentService = {
-  createOrder: async (courseId: string) => {
+  createOrder: async (courseId: string, amount: number, title: string) => {
     const response = await fetch(`${API_URL}/payments/create-order`, {
       method: 'POST',
       headers: getHeaders(),
-      body: JSON.stringify({ courseId }),
+      body: JSON.stringify({
+        courseId,
+        amount,
+        currency: 'INR',
+        description: `Purchase: ${title}`
+      }),
     });
 
     if (!response.ok) {

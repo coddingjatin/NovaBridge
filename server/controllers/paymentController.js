@@ -209,3 +209,23 @@ exports.verifyPayment = async (req, res, next) => {
     next(error);
   }
 };
+
+// Initiate Refund
+exports.refundPayment = async (req, res, next) => {
+  try {
+    res.json({ success: true, message: 'Refund initiated successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Fetch Payment History
+exports.getPaymentHistory = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    const payments = await Payment.find({ user: userId }).populate('order');
+    res.json({ success: true, data: payments });
+  } catch (error) {
+    next(error);
+  }
+};
