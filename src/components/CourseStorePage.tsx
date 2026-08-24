@@ -110,6 +110,7 @@ export const CourseStorePage: React.FC<{ user?: any }> = ({ user }) => {
   const [purchasedCourses, setPurchasedCourses] = useState<string[]>([]);
   const [checkoutSuccess, setCheckoutSuccess] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
   const categories = ['All', 'Money Management Tools', 'System Design & Engineering', 'Algorithms & Coding'];
 
@@ -120,6 +121,30 @@ export const CourseStorePage: React.FC<{ user?: any }> = ({ user }) => {
   const handleBuyCourse = (course: StoreCourse) => {
     setSelectedCourse(course);
     setCheckoutSuccess(false);
+
+    initiatePayment({
+      courseId: course.id,
+      courseTitle: course.title,
+      coursePrice: course.priceINR,
+      userDetails: {
+        name: user?.name,
+        email: user?.email,
+      },
+      onSuccess: () => {
+        setPurchasedCourses([...purchasedCourses, course.id]);
+        setCheckoutSuccess(true);
+        setTimeout(() => {
+          setCheckoutSuccess(false);
+          setSelectedCourse(null);
+          setToastMsg(`Successfully enrolled in "${course.title}"! Course unlocked.`);
+          setTimeout(() => setToastMsg(null), 4000);
+        }, 1200);
+      },
+      onError: (errorMessage) => {
+        alert(`Payment error: ${errorMessage}`);
+        setSelectedCourse(null);
+      }
+    });
   };
 
   const { initiatePayment, loading: isPaymentProcessing } = useRazorpay();
@@ -257,11 +282,13 @@ export const CourseStorePage: React.FC<{ user?: any }> = ({ user }) => {
                 {/* Action Button */}
                 <button
                   onClick={() => handleBuyCourse(course)}
-                  disabled={isEnrolled}
+                  disabled={isEnrolled || (isPaymentProcessing && selectedCourse?.id === course.id)}
                   className={`btn-buy-course ${isEnrolled ? 'btn-enrolled' : ''}`}
                 >
                   {isEnrolled ? (
                     <><CheckCircle2 size={15} /> Enrolled & Active</>
+                  ) : (isPaymentProcessing && selectedCourse?.id === course.id) ? (
+                    <><Zap size={15} /> Creating order...</>
                   ) : (
                     <><ShoppingCart size={15} /> Buy Course Now</>
                   )}
@@ -273,7 +300,7 @@ export const CourseStorePage: React.FC<{ user?: any }> = ({ user }) => {
       </div>
 
       {/* CHECKOUT MODAL POPUP */}
-      {selectedCourse && (
+      {showModal && selectedCourse && (
         <div className="modal-overlay-bg" onClick={() => setSelectedCourse(null)}>
           <div className="checkout-modal-card" onClick={e => e.stopPropagation()}>
             <div className="checkout-top">
