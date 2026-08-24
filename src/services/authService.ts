@@ -74,11 +74,11 @@ export const getStoredSession = (): AuthSession => {
   } catch (e) {
     console.error('Error loading stored auth session:', e);
   }
-  // Default to student demo session if none set, or null
+  // Default to unauthenticated state if none stored
   return {
-    isAuthenticated: true,
-    user: DEMO_CREDENTIALS.student.user,
-    token: 'demo_session_token_std'
+    isAuthenticated: false,
+    user: null,
+    token: null
   };
 };
 

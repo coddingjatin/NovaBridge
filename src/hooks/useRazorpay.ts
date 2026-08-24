@@ -48,12 +48,8 @@ export const useRazorpay = () => {
           // 1. Create order on the server
           orderRes = await paymentService.createOrder(courseId, coursePrice, courseTitle);
         } catch (serverErr: any) {
-          console.warn('Backend server unreachable or error. Falling back to local mock payment...', serverErr);
-          if (onMockFallback) {
-            onMockFallback();
-            return;
-          }
-          throw serverErr;
+          console.error('Backend server unreachable or error:', serverErr);
+          throw new Error(`Failed to contact payment backend: ${serverErr.message || 'Server unreachable'}`);
         }
 
         const data = orderRes.data || orderRes;
