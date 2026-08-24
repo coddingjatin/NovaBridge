@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const path = require('path');
 const paymentRoutes = require('./routes/paymentRoutes');
 
 const app = express();
@@ -18,9 +19,27 @@ app.use(express.json());
 // Register API Routes
 app.use('/api/payments', paymentRoutes);
 
+// Serve static assets in production (from dist folder)
+const distPath = path.join(__dirname, '../dist');
+app.use(express.static(distPath));
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'NovaBridge backend is running' });
+});
+
+// Root greeting endpoint & static fallback
+app.get('*', (req, res) => {
+  // If request is for API, return 404
+  if (req.path.startsWith('/api')) {
+    return res.status(404).json({ success: false, message: 'API Route Not Found' });
+  }
+  // Try sending the React built file
+  res.sendFile(path.join(distPath, 'index.html'), (err) => {
+    if (err) {
+      res.send('NovaBridge Express Server is running! Front-end assets are not built yet.');
+    }
+  });
 });
 
 // Database connection

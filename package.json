@@ -9,7 +9,8 @@
     "lint": "tsc",
     "preview": "vite preview",
     "server": "node server/server.js",
-    "server:seed": "node server/scripts/seed.js"
+    "server:seed": "node server/scripts/seed.js",
+    "start": "node server/server.js"
   },
   "dependencies": {
     "lucide-react": "^0.344.0",
