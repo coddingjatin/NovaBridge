@@ -8,9 +8,26 @@ const paymentRoutes = require('./routes/paymentRoutes');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Enable CORS for frontend running on localhost:3000 (Vite default or custom)
+// Enable CORS for frontend
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'https://nova-bridge-taupe.vercel.app',  // Vercel production
+  /\.vercel\.app$/,                          // All Vercel preview deployments
+];
+
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:5173', 'http://127.0.0.1:5173'],
+  origin: (origin, callback) => {
+    // Allow server-to-server (no origin) and matched origins
+    if (!origin) return callback(null, true);
+    const allowed = allowedOrigins.some(o =>
+      typeof o === 'string' ? o === origin : o.test(origin)
+    );
+    if (allowed) return callback(null, true);
+    callback(new Error(`CORS not allowed for origin: ${origin}`));
+  },
   credentials: true
 }));
 
