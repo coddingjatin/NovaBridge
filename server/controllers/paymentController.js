@@ -30,39 +30,8 @@ exports.createOrder = async (req, res, next) => {
 
     const amountInPaise = Math.round(course.price * 100);
 
-    // Check if system token is placeholder or missing -> fallback to mock simulation
     const PAYFLOW_API_URL = process.env.PAYFLOW_API_URL || 'http://localhost:5000/api';
     const PAYFLOW_SYSTEM_TOKEN = process.env.PAYFLOW_SYSTEM_TOKEN;
-
-    if (!PAYFLOW_SYSTEM_TOKEN || PAYFLOW_SYSTEM_TOKEN === 'placeholder' || PAYFLOW_SYSTEM_TOKEN === 'payflow_system_token_secret_key') {
-      console.warn('PAYFLOW_SYSTEM_TOKEN is placeholder or not configured. Using Mock fallback...');
-      const mockRazorpayOrderId = `order_mock_${Math.random().toString(36).substring(2, 10)}`;
-      const internalOrderId = `ORD-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-
-      const order = await Order.create({
-        orderId: internalOrderId,
-        amount: amountInPaise,
-        currency: 'INR',
-        user: userId,
-        course: course._id,
-        razorpayOrderId: mockRazorpayOrderId,
-        status: 'created',
-      });
-
-      return res.status(201).json({
-        success: true,
-        isMockMode: true,
-        data: {
-          order,
-          razorpayOrder: {
-            id: mockRazorpayOrderId,
-            amount: amountInPaise,
-            currency: 'INR',
-          },
-          keyId: 'rzp_test_placeholder',
-        },
-      });
-    }
 
     // Call PayFlow backend to create order server-to-server
     console.log(`Sending order request to PayFlow: amount=${amountInPaise}, courseId=${course.customId}`);
@@ -137,45 +106,7 @@ exports.verifyPayment = async (req, res, next) => {
       });
     }
 
-    const isMock = razorpay_order_id.startsWith('order_mock_') || razorpay_signature === 'mock_signature';
 
-    if (isMock) {
-      const order = await Order.findOne({ razorpayOrderId: razorpay_order_id });
-      if (!order) {
-        return res.status(404).json({ success: false, message: 'Order not found' });
-      }
-
-      // Verify mock payment simulation
-      const internalPaymentId = `PAY-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-      const payment = await Payment.create({
-        paymentId: internalPaymentId,
-        razorpayOrderId: razorpay_order_id,
-        razorpayPaymentId: razorpay_payment_id || `pay_mock_${Date.now()}`,
-        signature: razorpay_signature || 'mock_signature',
-        order: order._id,
-        user: userId,
-        amount: order.amount,
-        currency: order.currency,
-        status: 'captured',
-        method: 'mock_gateway',
-      });
-
-      // Update order status
-      order.status = 'paid';
-      order.razorpayPaymentId = payment.razorpayPaymentId;
-      await order.save();
-
-      // Grant Course Access to the User
-      await User.findByIdAndUpdate(userId, {
-        $addToSet: { purchasedCourses: order.course },
-      });
-
-      return res.status(200).json({
-        success: true,
-        message: 'Mock payment verified and course access granted successfully',
-        data: { payment },
-      });
-    }
 
     const PAYFLOW_API_URL = process.env.PAYFLOW_API_URL || 'http://localhost:5000/api';
     const PAYFLOW_SYSTEM_TOKEN = process.env.PAYFLOW_SYSTEM_TOKEN;

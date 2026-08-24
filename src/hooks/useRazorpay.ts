@@ -53,25 +53,7 @@ export const useRazorpay = () => {
         }
 
         const data = orderRes.data || orderRes;
-        const { razorpayOrder, keyId, isMockMode } = data;
-        const mockMode = orderRes.isMockMode || isMockMode;
-
-        // If backend is running in Mock Mode (due to placeholder keys)
-        if (mockMode) {
-          console.log('Backend is in Mock Mode. Verifying order mock-signature...');
-          try {
-            const verifyRes = await paymentService.verifyPayment({
-              razorpay_order_id: razorpayOrder.id,
-              razorpay_payment_id: `pay_mock_${Date.now()}`,
-              razorpay_signature: 'mock_signature',
-            });
-            if (onSuccess) onSuccess(verifyRes);
-            return;
-          } catch (err: any) {
-            if (onError) onError(err.message || 'Mock verification failed');
-            return;
-          }
-        }
+        const { razorpayOrder, keyId } = data;
 
         // Load Razorpay script for live gateway
         const isLoaded = await loadRazorpayScript();
