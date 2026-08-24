@@ -59,32 +59,42 @@ app.get('*', (req, res) => {
   });
 });
 
-// Database connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/novabridge';
+// Database connection — server will NOT start if MongoDB is unreachable
+const MONGODB_URI = process.env.MONGODB_URI;
+
+if (!MONGODB_URI) {
+  console.error('FATAL: MONGODB_URI environment variable is not set. Server cannot start.');
+  process.exit(1);
+}
+
+// Log only the host part, never the password
+try {
+  const url = new URL(MONGODB_URI);
+  console.log('Connecting to MongoDB host:', url.hostname);
+} catch (_) {
+  console.log('Connecting to MongoDB...');
+}
+
 mongoose
   .connect(MONGODB_URI)
   .then(() => {
-    console.log('Connected to MongoDB successfully at:', MONGODB_URI);
+    console.log('MongoDB connected successfully.');
     app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
+      console.log(`NovaBridge backend running on port ${PORT}`);
     });
   })
   .catch((err) => {
-    console.error('MongoDB database connection error:', err.message);
-    console.warn('\n⚠️ WARNING: Could not connect to local MongoDB. Ensure MongoDB is running on your machine.');
-    // We can fall back to running the server without MongoDB for testing if we want,
-    // but standard behavior is to report it. Let's start the server so frontend fallback works.
-    console.warn('Starting Express API server anyway to handle requests...');
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT} (without DB connection)`);
-    });
+    console.error('MongoDB connection FAILED:', err.message);
+    console.error('Check MONGODB_URI in Render environment variables.');
+    process.exit(1); // Crash fast — don't serve requests without DB
   });
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error('Server error handler:', err);
+  console.error('Server error handler:', err.message);
   res.status(err.status || 500).json({
     success: false,
     message: err.message || 'Internal Server Error'
   });
 });
+
