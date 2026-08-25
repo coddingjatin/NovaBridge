@@ -4,43 +4,43 @@ export const initialProfileData: UserProfile = {
   id: 'usr_75284739',
   slug: 'jatin-vishwakarma',
   fullName: 'Jatin Vishwakarma',
-  headline: 'Cloud-Native Backend Engineer | Competitive Programmer (Codeforces Candidate Master) | Building Scalable Systems',
-  photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-  institution: 'Indian Institute of Technology (IIT), Bombay',
-  degree: 'B.Tech in Computer Science & Engineering (\'26)',
-  graduationYear: '2026',
+  headline: '3x SIH Winner | AIML Developer | Building Scalable Systems',
+  photoUrl: 'https://i.pinimg.com/736x/70/b2/5c/70b25c30ecb7d46f83c29ee3df235f92.jpg',
+  institution: 'Walchand College of Engineering, Sangli',
+  degree: 'B.Tech in Computer Science & Engineering (\'28)',
+  graduationYear: '2028',
   location: 'India',
   availability: 'Available Immediately',
   email: 'jatin.vishwakarma@iitb.ac.in',
   phone: '+91 98765 43210',
-  about: `Cloud-Native Backend Engineer & High-Throughput Systems Specialist. Demonstrated track record of building production-grade software, publishing peer-reviewed AI research, winning international hackathons, and ranking in top competitive coding benchmarks globally. Driven by quantitative proof, clean engineering patterns, and shipping scalable solutions.`,
+  about: `3x SIH Winner | AIML Developer | Building Scalable Systems. Passionate about leveraging AI and machine learning to solve real-world problems, with a strong foundation in cloud-native development and high-throughput systems. Proven ability to lead cross-functional teams and deliver innovative solutions under tight deadlines.`,
   
   handles: {
-    github: 'jatinvishwakarma',
-    leetcode: 'jatin_iitb',
-    codeforces: 'jatin_v',
-    codechef: 'jatin_chef',
+    github: 'coddingjatin',
+    leetcode: 'Jatinv30',
+    codeforces: 'JatinVish30',
+    codechef: 'jatin_v_30',
     hackerrank: 'jatin_hr',
     codestudio: 'jatin_ninja',
-    devfolio: 'jatinvishwakarma',
-    linkedin: 'https://linkedin.com/in/jatin-vishwakarma',
-    portfolio: 'https://jatinvishwakarma.dev'
+    devfolio: 'Jatinvish30',
+    linkedin: 'https://www.linkedin.com/in/jatin-vishwakarma-563914246/',
+    portfolio: 'https://jatinv-portfolio.netlify.app/'
   },
 
   linkedInStats: {
-    url: 'https://linkedin.com/in/jatin-vishwakarma',
-    followersCount: 2850,
+    url: 'https://www.linkedin.com/in/jatin-vishwakarma-563914246/',
+    followersCount: 42388,
     connectionsCount: 500,
     topSkillEndorsements: ['Distributed Systems', 'C++', 'System Design', 'React.js', 'Go (Golang)'],
     verified: true
   },
 
   codeChefStats: {
-    handle: 'jatin_chef',
-    rating: 1950,
-    stars: '5★',
+    handle: 'jatin_v_30',
+    rating: 1425,
+    stars: '2★',
     globalRank: 890,
-    contestsAttended: 57,
+    contestsAttended: 15,
     verified: true
   },
 
@@ -60,11 +60,11 @@ export const initialProfileData: UserProfile = {
   },
 
   githubStats: {
-    username: 'jatinvishwakarma',
-    publicRepos: 34,
-    stars: 890,
-    followers: 245,
-    following: 68,
+    username: 'coddingjatin',
+    publicRepos: 70,
+    stars: 42,
+    followers: 113,
+    following: 20,
     topLanguages: [
       { name: 'TypeScript', percentage: 42, color: '#3178C6' },
       { name: 'C++', percentage: 28, color: '#F34B7D' },
@@ -81,12 +81,12 @@ export const initialProfileData: UserProfile = {
   },
 
   leetcodeStats: {
-    username: 'jatin_iitb',
-    totalSolved: 1829,
-    easySolved: 525,
-    mediumSolved: 1026,
-    hardSolved: 278,
-    ranking: 4812,
+    username: '`Jatinv30',
+    totalSolved: 422,
+    easySolved: 186,
+    mediumSolved: 189,
+    hardSolved: 47,
+    ranking: 1456,
     acceptanceRate: 74.8,
     totalQuestions: 3888,
     contestsAttended: 5,
@@ -95,11 +95,11 @@ export const initialProfileData: UserProfile = {
 
   codeforcesStats: {
     handle: 'jatin_v',
-    rating: 1891,
-    maxRating: 1980,
-    rank: 'Candidate Master',
-    maxRank: 'Candidate Master',
-    totalContests: 42,
+    rating: 1341,
+    maxRating: 134,
+    rank: 'Pupil',
+    maxRank: 'Pupil',
+    totalContests: 12,
     lastSynced: '2 mins ago'
   },
 
@@ -187,13 +187,13 @@ export const initialProfileData: UserProfile = {
       id: 'e1',
       degree: 'Bachelor of Technology (B.Tech)',
       fieldOfStudy: 'Computer Science & Engineering',
-      institution: 'Indian Institute of Technology (IIT), Bombay',
-      location: 'Mumbai, MH, India',
+      institution: 'Walchand College of Engineering, Sangli',
+      location: 'Sangli, MH, India',
       startYear: '2022',
-      endYear: '2026',
-      grade: '9.4 / 10.0 CGPA',
+      endYear: '2028',
+      grade: '8.2 / 10.0 CGPA',
       highlights: [
-        'Department Academic Rank 4 in Computer Science',
+        'SIH Winner 2023, 2024, 2025 (Smart India Hackathon)',
         'Teaching Assistant for CS213: Data Structures & Algorithms',
         'Head of Tech Infrastructure for Techfest IIT Bombay'
       ]
